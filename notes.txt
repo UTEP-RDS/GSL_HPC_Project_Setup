@@ -1,0 +1,106 @@
+Running C++ on Punakha
+
+Log in to punakha
+
+Load the following modules:
+
+module load cmake gnu12 gsl
+module save
+
+go to interactive session for compilation and tests
+
+sact_me
+srun --account=punakha_general -p hgx -n 1 --gres=gpu:1 --pty bash
+
+HPC:
+
+chmod +x a.out
+./a.out
+
+
+
+------------  static make (links gsl libs) - local
+TARGET = a.out
+SRC = main.cpp
+GSL_INC = /home/utep/gsl/include
+GSL_LIB = /home/utep/gsl/lib
+
+$(TARGET): $(SRC)
+	g++ -I$(GSL_INC) -static -L$(GSL_LIB) $(SRC) -lgsl -lgslcblas -lm -o $(TARGET)
+---------------
+
+ldd a.out  -> not a dynamic executable
+
+---------- build in punakha
+TARGET = a.out
+SRC = main.cpp
+GSL_INC = /opt/ohpc/pub/libs/gnu12/gsl/2.7.1/include
+GSL_LIB = /opt/ohpc/pub/libs/gnu12/gsl/2.7.1/lib
+
+$(TARGET): $(SRC)
+	g++ -I$(GSL_INC) -L$(GSL_LIB) $(SRC) -lgsl -lgslcblas -lm -o $(TARGET)
+------------
+
+export LD_LIBRARY_PATH=/opt/ohpc/pub/libs/gnu12/gsl/2.7.1/lib:$LD_LIBRARY_PATH
+
+execute:
+./a.out
+
+
+------------- batch job
+#!/bin/bash
+#SBATCH --job-name=myjob
+#SBATCH --output=output.txt
+#SBATCH --time=01:00:00
+#SBATCH --ntasks=1
+
+./a.out
+-----------
+
+---------- batch job 
+#!/bin/bash
+#SBATCH --job-name=cplus
+#SBATCH --output=cplus_%j.out
+#SBATCH --error=cplus_%j.err
+#SBATCH --partition=dgx
+#SBATCH --account=punakha_general
+#SBATCH --qos=punakha_dgx_general
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks=1
+#SBATCH --time=00:05:00
+
+./a.out
+
+
+------ batch several instances
+
+#!/bin/bash
+#SBATCH --job-name=cplus
+#SBATCH --output=cplus_%A_%a.out
+#SBATCH --error=cplus_%A_%a.err
+#SBATCH --partition=dgx
+#SBATCH --account=punakha_general
+#SBATCH --qos=punakha_dgx_general
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks=1
+#SBATCH --time=00:05:00
+#SBATCH --array=1-10
+
+module load gsl
+./a.out $SLURM_ARRAY_TASK_ID
+
+
+--------------
+
+cd work/<username>
+sbatch job.sbatch
+
+
+
+
+
+
+
+
+ 
+
