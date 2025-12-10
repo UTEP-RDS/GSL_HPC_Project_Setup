@@ -2,12 +2,13 @@
 #SBATCH --job-name=parallel-simulations
 #SBATCH --output=/dev/null
 #SBATCH --error=/dev/null
-#SBATCH --partition=dgx
+#SBATCH --partition=dgx          
 #SBATCH --qos=punakha_dgx_general
-#SBATCH --gres=gpu:1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=2G
+#SBATCH --nodes=1               
+#SBATCH --ntasks=10           
+#SBATCH --cpus-per-task=1      
+#SBATCH --time=02:00:00
+#SBATCH --mem=0             
 #SBATCH --time=02:00:00
 #SBATCH --array=1-10
 
@@ -45,3 +46,4 @@ fi
 ./a.out
 
 echo "Completed simulation $SIM_NUM"
+
