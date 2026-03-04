@@ -7,8 +7,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=2G
-#SBATCH --time=02:00:00
+#SBATCH --mem=1G
+#SBATCH --time=00:05:00
 #SBATCH --array=1-10
 
 SIM_NUM=$SLURM_ARRAY_TASK_ID

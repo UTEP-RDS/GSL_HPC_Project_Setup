@@ -2,14 +2,11 @@
 #SBATCH --job-name=parallel-simulations
 #SBATCH --output=/dev/null
 #SBATCH --error=/dev/null
-#SBATCH --partition=dgx          
-#SBATCH --qos=punakha_dgx_general
-#SBATCH --nodes=1               
-#SBATCH --ntasks=10           
-#SBATCH --cpus-per-task=1      
-#SBATCH --time=02:00:00
-#SBATCH --mem=0             
-#SBATCH --time=02:00:00
+#SBATCH --partition=medium
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH --time=00:05:00
 #SBATCH --array=1-10
 
 SIM_NUM=$SLURM_ARRAY_TASK_ID
@@ -29,6 +26,10 @@ module load gsl
 echo "Verifying modules..."
 module list
 
+# >>> Add the GSL runtime path <<<
+export LD_LIBRARY_PATH=/opt/ohpc/pub/libs/gnu12/gsl/2.7.1/lib:${LD_LIBRARY_PATH:-}
+echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+
 echo "Starting simulation $SIM_NUM in $SIM_DIR"
 
 if [ ! -d "$SIM_DIR" ]; then
@@ -46,4 +47,3 @@ fi
 ./a.out
 
 echo "Completed simulation $SIM_NUM"
-

@@ -53,9 +53,15 @@ chmod +x folder_create.sh
 
 ## Running Simulations on HPC
 
-### Submit SLURM job array
+### Submit SLURM job array (Jakar)
 ```bash
-sbatch --array=1-10 scripts/job_sims.sbatch
+sbatch --array=1-10 scripts/job_sims_jakar.sbatch
+# This runs 10 simulations in parallel, each using 1 CPU core
+```
+
+### Submit SLURM job array (Punakha Setup)
+```bash
+sbatch --array=1-10 scripts/job_sims_punakha.sbatch
 # This runs 10 simulations in parallel, each using 1 CPU core
 ```
 
@@ -91,12 +97,17 @@ cplus/
 
 ## Key Features
 
-### SLURM Configuration
-- **Partition**: dgx (GPU node)
+### SLURM Configuration for Punkaha
+- **Partition**: dgx 
 - **CPUs per task**: 1 core per simulation
 - **Memory**: 1GB per task
-- **Time limit**: 30 minutes
-- **GPU**: 1 GPU available
+- **Time limit**: 5 minutes
+
+### SLURM Configuration for Jakar
+- **Partition**: medium 
+- **CPUs per task**: 1 core per simulation
+- **Memory**: 1GB per task
+- **Time limit**: 5 minutes
 
 ### Output Management
 - Each simulation writes its own `output.log` and `error.log` in its folder
@@ -117,6 +128,15 @@ The script automatically loads required modules:
 - Each simulation runs independently and in parallel
 
 ## Troubleshooting
+
+### GSL Library not found 
+./a.out: error while loading shared libraries: libgsl.so.27:  
+
+Link the library explictly to the executable by setting an env variable. Can be added to the script.
+```bash
+export LD_LIBRARY_PATH=/opt/ohpc/pub/libs/gnu12/gsl/2.7.1/lib:${LD_LIBRARY_PATH:-}
+echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+```
 
 ### Line ending errors
 If you get: `sbatch: error: Batch script contains DOS line breaks`
