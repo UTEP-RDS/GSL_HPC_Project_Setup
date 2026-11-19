@@ -65,6 +65,12 @@ sbatch --array=1-10 scripts/job_sims_punakha.sbatch
 # This runs 10 simulations in parallel, each using 1 CPU core
 ```
 
+### Submit SLURM job array with OpenMP threads (Punakha Setup)
+The `openmp/Makefile` compiles with `-fopenmp`. Copy `openmp/Makefile` and `openmp/openmp_check_threads.cpp` into each `sim<N>` folder, then run:
+```bash
+sbatch --array=1-10 scripts/job_sims_punakha_openmp.sbatch
+# Each array task gets 5 dedicated cores on a shared node, with one OpenMP thread per core```
+
 ### Monitor job status
 ```bash
 squeue -u username
